@@ -46,18 +46,18 @@ export const TripsSideBar = ({
     const toggleSidebar = () => setIsOpen(prev => !prev);
 
     return (
-        <div className={cn("w-max top-0 left-0  h-full flex items-center justify-center absolute",
+        <div className={cn("w-max top-0 left-0  h-full flex items-center justify-center absolute z-20",
             isOpen ? "translate-x-0" : "-translate-x-full",
             className)}>
             <SideBarButton
-                className={cn("absolute top-[50%] left-[95%] z-0")}
+                className={cn("absolute top-[50%] left-[95%] z-20")}
                 size={"default"}
                 onClick={toggleSidebar}
             />
             <div
                 className={cn(
                     "w-max min-w-[200px] h-full flex-shrink-0",
-                    "bg-purple-200 px-5 pt-7 pb-4 z-10",
+                    "bg-purple-200 px-5 pt-7 pb-4 z-20",
                     "shadow-[0px_4px_6px_0px_#231538]",
                     "flex flex-col gap-5",
                     "transform transition-transform duration-300",

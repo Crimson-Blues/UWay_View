@@ -38,7 +38,7 @@ export function SearchBarWithFilters() {
   };
 
   return (
-    <div className="flex flex-col w-full h-max">
+    <div className="flex flex-col w-full h-max z-10 fixed">
       <div className="flex flex-col  gap-y-0 items-center w-full px-4 py-8 max-sm:px-2 max-sm:py-4">
         {/* Main Search Bar */}
         <div
