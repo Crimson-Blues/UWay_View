@@ -10,6 +10,7 @@ export interface Trip {
 }
 
 export interface TripsSidebarProps {
-    trips?: Trip[];
-    onRemoveTrip?: (tripId: string) => void;
+    trips: Trip[];
+    onRemoveTrip?: (tripId: string) => void; // Optional handler
+    className?: string;
 }

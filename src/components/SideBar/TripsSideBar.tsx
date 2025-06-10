@@ -5,39 +5,11 @@ import {SideBarButton} from "./SideBarButton.tsx";
 import {useState} from "react";
 import {AtSign} from "lucide-react";
 
-// Mock data for demonstration
-const mockTrips = [
-    {
-        id: "1",
-        route: "Cámbulos - Mélendez",
-        rating: 4.0,
-        reviewCount: 5,
-        departureDay: "Martes",
-        departureTime: "9:00 am",
-        vehicleType: "Moto" as const,
-        driverName: "Liseth Natalia",
-    },
-    {
-        id: "2",
-        route: "Palmira - Cali",
-        rating: 3.0,
-        reviewCount: 9,
-        departureDay: "Miércoles",
-        departureTime: "5:00 am",
-        vehicleType: "Auto" as const,
-        driverName: "Juan Moreno",
-    },
-];
-
-const handleRemoveTrip = (tripId: string) => {
-    console.log("Removing trip:", tripId);
-    // Here you would implement the actual removal logic
-};
-
 
 
 export const TripsSideBar = ({
-                                 trips = mockTrips,
+                                 trips,
+                                 onRemoveTrip,
                                  className,
                              }: TripsSidebarProps & { className?: string }) => {
 
@@ -76,7 +48,7 @@ export const TripsSideBar = ({
                 <div className="flex flex-col items-center w-max gap-2">
                     {trips.map((trip, index) => (
                         <div key={trip.id} className="w-full">
-                            <TripItem trip={trip} onRemove={handleRemoveTrip} className="w-max"/>
+                            <TripItem trip={trip} onRemove={onRemoveTrip} className="w-max"/>
                             {index < trips.length - 1 && (
                                 <div className="w-[266px] h-px bg-black mx-auto"/>
                             )}

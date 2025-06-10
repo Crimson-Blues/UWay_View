@@ -38,8 +38,8 @@ export function SearchBarWithFilters() {
   };
 
   return (
-    <div className="flex flex-col w-full h-max z-10 fixed">
-      <div className="flex flex-col  gap-y-0 items-center w-full px-4 py-8 max-sm:px-2 max-sm:py-4">
+    <div className="flex flex-col w-max h-max z-10 relative">
+      <div className="flex flex-col  gap-y-0 items-center w-max px-4 py-8 max-sm:px-2 max-sm:py-4">
         {/* Main Search Bar */}
         <div
           className="flex items-center w-full max-w-2/3 h-[60px] bg-white rounded-[28px] shadow-md
@@ -87,7 +87,7 @@ export function SearchBarWithFilters() {
 
         {/* Filter Buttons */}
         <div
-          className={"flex h-full py-2 justify-center items-center gap-5 w-full max-w-3/4 mt-4 max-lg:gap-5 max-lg:flex-wrap max-sm:flex-col max-sm:gap-4 max-sm:h-auto max-sm:py-2.5"}
+          className={"flex h-full py-2 justify-center items-center gap-5 w-max mt-4 max-lg:gap-5 max-lg:flex-wrap max-sm:flex-col max-sm:gap-4 max-sm:h-auto max-sm:py-2.5"}
         >
           <FilterButton
             icon={<BriefcaseIcon />}
