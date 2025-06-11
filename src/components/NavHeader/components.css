@@ -6,7 +6,7 @@
 
 
 .logo-section{
-    @apply inline-flex bg-purple-100 relative shrink-0 rounded-[40px] gap-5 items-center-safe pr-5 h-max w-max max-md:gap-3 max-md:h-[60px] max-md:w-[360px] max-sm:gap-2.5 max-sm:justify-center max-sm:w-full max-sm:h-[50px];
+    @apply inline-flex bg-purple-100 relative shrink-0 rounded-[40px] gap-5 items-center-safe pr-5 h-max w-max max-md:gap-3 max-md:h-[60px] max-md:w-[360px] max-sm:gap-2.5 max-sm:justify-center max-sm:w-full max-sm:h-[50px] hover:bg-purple-200;
 }
 
 .header-text{

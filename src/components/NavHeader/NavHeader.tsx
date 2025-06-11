@@ -1,12 +1,26 @@
 "use client";
 import * as React from "react";
-import HelmetIcon from "./HelmetIcon.tsx";
 import ChevronDownIcon from "./ChevronDownIcon.tsx";
+import {cn} from "../../lib/utils.ts";
 
-const NavHeader: React.FC = () => {
+type LogoProps = {
+    className?: string;
+    title: string;
+    icon: React.ReactElement;
+    handleClick: () => void;
+};
+
+type NavHeaderProps = {
+    className?: string;
+    title: string;
+    icon: React.ReactElement;
+    handleClick: () => void;
+};
+
+const NavHeader: React.FC<NavHeaderProps> = ({className, title, icon, handleClick}) => {
     return (
-        <header className="nav-header">
-            <LogoSection />
+        <header className={cn("nav-header", className)} >
+            <LogoSection title={title} icon={icon} handleClick={handleClick}/>
             <NavigationLinks />
             <UserProfile />
         </header>
@@ -14,15 +28,15 @@ const NavHeader: React.FC = () => {
 };
 
 
-const LogoSection: React.FC = () => {
+const LogoSection: React.FC<LogoProps> = ({className, title, icon, handleClick}) => {
     return (
-        <section className="logo-section">
+        <section className={cn("logo-section", className)} onClick={handleClick}>
             <LogoCircle />
             <h1 className="header-text">
-                Modo Pasajero
+                {title}
             </h1>
             <div>
-                <HelmetIcon />
+                {icon}
             </div>
         </section>
     );

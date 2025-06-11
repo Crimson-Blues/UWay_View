@@ -1,10 +1,15 @@
-import Index from './index';
+import Passenger from './Pages/passenger.tsx';
+import Driver from './Pages/driver.tsx';
+import { Route, Routes, useNavigate } from "react-router-dom";
 import './App.css'
 
 function App() {
 
   return (
-      <Index />
+      <Routes>
+        <Route path="/" element={<Passenger/>} />
+        <Route path="/driver" element={<Driver />} />
+      </Routes>
   );
 }
 

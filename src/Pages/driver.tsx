@@ -1,9 +1,11 @@
-import NavHeader from "./components/NavHeader/NavHeader.tsx";
-import SearchBarWithFilters from "./components/SearchBar/SearchBarWithFilters.tsx";
-import {TripsSideBar} from "./components/SideBar/TripsSideBar.tsx";
-import Map from "./components/Map/Map.tsx";
+import NavHeader from "../components/NavHeader/NavHeader.tsx";
+import SearchBarWithFilters from "../components/SearchBar/SearchBarWithFilters.tsx";
+import {TripsSideBar} from "../components/SideBar/TripsSideBar.tsx";
+import Map from "../components/Map/Map.tsx";
+import {CarIcon} from "../components/NavHeader/Icons.tsx";
 import {useState} from "react";
 import * as React from "react";
+import {useNavigate} from "react-router-dom";
 
 // Mock data for demonstration
 const mockTrips = [
@@ -29,11 +31,16 @@ const mockTrips = [
     },
 ];
 
-function Index() {
+function Driver() {
     const [trips, setTrips] = useState(mockTrips);
-
     const [latitude, setLat] = useState(0);
     const [longitude, setLong] = useState(0);
+
+    const navigate = useNavigate();
+
+    const handleClickLogo = () => {
+        navigate("/");
+    };
 
     const options = {
         enableHighAccuracy: true,
@@ -79,7 +86,7 @@ function Index() {
 
   return (
     <main className="bg-amber-200 h-full w-full flex flex-col">
-        <NavHeader />
+        <NavHeader title={"Modo Conductor"} icon={<CarIcon />} handleClick={handleClickLogo} />
         <div className="flex-1 flex-col w-full h-full justify-center justify-items-center relative">
             <SearchBarWithFilters />
             <Map className={"h-full w-full absolute top-0 left-0 z-0"} latitude={latitude as unknown as number} longitude={longitude as unknown as number} />
@@ -91,4 +98,4 @@ function Index() {
   );
 }
 
-export default Index;
+export default Driver;
