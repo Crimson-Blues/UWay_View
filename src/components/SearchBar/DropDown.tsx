@@ -31,9 +31,12 @@ const Dropdown: React.FC<Props> = ({className, options, placeholder}) => {
             borderColor: "transparent",
             borderWidth: "0px",
             boxShadow: "none",
+            cursor: "pointer",
+            color: "red",
             borderRadius: "50px",
             "&:hover": {
-                borderColor: "#B45309",
+                backgroundColor: "transparent",
+                boxShadow: "none"
             },
         }),
         menu: (base: any) => ({
@@ -50,6 +53,14 @@ const Dropdown: React.FC<Props> = ({className, options, placeholder}) => {
                 backgroundColor: "#FBBF24", // on click
             },
         }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: "black", // Selected Text
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: "black", // Input text
+        })
     };
     return (
         <div className={cn("w-max h-max")}>

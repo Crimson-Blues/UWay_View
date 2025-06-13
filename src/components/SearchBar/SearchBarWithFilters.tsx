@@ -8,6 +8,7 @@ import { CarIcon } from "./icons/CarIcon";
 import { FilterButton } from "./FilterButton";
 import { useState } from "react";
 import type {OptionType} from "./DropDown.tsx";
+import {cn} from "../../lib/utils.ts";
 
 export function SearchBarWithFilters() {
 
@@ -31,6 +32,7 @@ export function SearchBarWithFilters() {
   const handleMenuClick = () => {
     // Handle menu click
     console.log("Menu clicked");
+    toggleFilters();
   };
 
   const handleSearchClick = () => {
@@ -54,12 +56,16 @@ export function SearchBarWithFilters() {
     { value: "pm", label: "P.M" },
   ];
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleFilters = () => setIsOpen(prev => !prev);
+
   return (
-    <div className="flex-grow shrink-0 flex-col w-max h-max z-10 relative">
+    <div className="flex-grow shrink-0 flex-col w-max h-max z-20 relative">
       <div className="flex flex-col  gap-y-0 items-center w-max px-4 py-8 max-sm:px-2 max-sm:py-4">
         {/* Main Search Bar */}
         <div
-          className="flex-grow shrink-0 items-center w-max h-max bg-white rounded-[28px] shadow-md
+          className="flex-grow shrink-0 z-10 items-center w-max h-max bg-white rounded-[28px] shadow-md
                                max-lg:max-w-[900px] max-sm:max-w-[350px] max-sm:h-[60px]"
         >
           <div className="flex items-center w-max h-max gap-1 flex-1 p-1">
@@ -104,7 +110,10 @@ export function SearchBarWithFilters() {
 
         {/* Filter Buttons */}
         <div
-          className={"flex h-full py-2 justify-center items-center gap-5 w-max mt-4 max-lg:gap-5 max-lg:flex-wrap max-sm:flex-col max-sm:gap-4 max-sm:h-auto max-sm:py-2.5"}
+          className={cn("flex h-full py-2 z-0 justify-center items-center gap-5 w-max mt-4 max-lg:gap-5 max-lg:flex-wrap max-sm:flex-col max-sm:gap-4 max-sm:h-auto max-sm:py-2.5",
+              isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full",
+              "transition-all duration-350"
+          )}
         >
           <FilterButton
             icon={<BriefcaseIcon />}

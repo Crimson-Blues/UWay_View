@@ -16,10 +16,10 @@ export function FilterButton({
   options,
 }: FilterButtonProps) {
   return (
-      <div className={"flex h-max px-1 items-center w-max pl-2 gap-2.5 rounded-full bg-purple-200 max-sm:h-6"}>
+      <div className={"flex h-max px-1 items-center w-max pl-2 gap-2.5 rounded-full bg-purple-200 hover:bg-purple-300 max-sm:h-6"}>
         {icon}
         <Dropdown
-          className={"text-purple-700 font-roboto text-lg font-normal leading-8 max-lg:text-xl max-sm:text-lg max-sm:w-auto max-sm:h-6 max-sm:leading-6"}
+          className={"text-lg font-normal leading-8 max-lg:text-xl max-sm:text-lg max-sm:w-auto max-sm:h-6 max-sm:leading-6"}
           placeholder={label}
           options={options}
         >
