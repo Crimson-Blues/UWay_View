@@ -190,6 +190,25 @@
   flex-shrink: 0;
 }
 
+.map-pin-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.map-pin-button:hover {
+  opacity: 0.7;
+}
+
+.map-pin-button:active {
+  transform: scale(0.95);
+}
+
 /* Vehicle Container */
 .vehicle-container {
   display: flex;
@@ -327,6 +346,20 @@
   box-shadow: 0 2px 8px rgba(96, 44, 173, 0.4);
 }
 
+.floating-action-button.confirm-mode {
+  background: #4CAF50;
+  animation: pulse-confirm 2s infinite;
+}
+
+.floating-action-button.confirm-mode:hover {
+  background: #45A049;
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.6);
+}
+
+.floating-action-button.confirm-mode:active {
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
 .button-label {
   display: flex;
   width: 200px;
@@ -344,6 +377,92 @@
   font-weight: 500;
   line-height: 28px;
   letter-spacing: 0px;
+}
+
+/* Map Selection Styles */
+.map-selection-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.map-selection-container {
+  width: 90vw;
+  height: 90vh;
+  max-width: 800px;
+  max-height: 600px;
+  background: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.map-selection-header {
+  background: #ECE5FE;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #D9C7FF;
+}
+
+.map-selection-title {
+  color: #602CAD;
+  font-family: Roboto, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.cancel-selection-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-selection-button:hover {
+  background-color: rgba(96, 44, 173, 0.1);
+}
+
+.map-selection-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-selection-map {
+  width: 100%;
+  height: 100%;
+}
+
+.map-selection-instructions {
+  background: #F8F5FF;
+  padding: 15px 20px;
+  border-top: 1px solid #D9C7FF;
+  text-align: center;
+}
+
+.map-selection-instructions p {
+  margin: 4px 0;
+  color: #602CAD;
+  font-family: Roboto, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+.map-selection-instructions p:first-child {
+  font-weight: 500;
+}
+
+.map-selection-instructions p:last-child {
+  font-size: 14px;
+  color: #7A3CBF;
+  font-family: monospace;
 }
 
 /* Responsive adjustments */
@@ -373,4 +492,28 @@
     width: 100%;
   }
 
+  .map-selection-container {
+    width: 95vw;
+    height: 95vh;
+  }
+
+  .map-selection-header {
+    padding: 15px;
+  }
+
+  .map-selection-title {
+    font-size: 20px;
+  }
+
+  .map-selection-instructions {
+    padding: 12px 15px;
+  }
+
+  .map-selection-instructions p {
+    font-size: 14px;
+  }
+
+  .map-selection-instructions p:last-child {
+    font-size: 12px;
+  }
 }

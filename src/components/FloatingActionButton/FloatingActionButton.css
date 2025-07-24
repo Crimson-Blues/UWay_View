@@ -34,6 +34,19 @@
   height: 24px;
 }
 
+
+@keyframes pulse-confirm {
+  0% {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .floating-action-button {

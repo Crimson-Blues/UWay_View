@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "./AddRouteModal.css";
+import LocationSelectionMap from "../Map/LocationSelectionMap";
 
 interface AddRouteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: (formData: RouteFormData) => void;
+  onLocationSelecting?: (isSelecting: boolean, mode?: 'start' | 'destination') => void;
+  onConfirmLocation?: () => void;
 }
 
 interface RouteFormData {
@@ -13,12 +16,16 @@ interface RouteFormData {
   vehicle: string;
   hours: string;
   minutes: string;
+  departureCoordinates?: { lat: number; lng: number };
+  destinationCoordinates?: { lat: number; lng: number };
 }
 
 const AddRouteModal: React.FC<AddRouteModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  onLocationSelecting,
+  onConfirmLocation,
 }) => {
   const [formData, setFormData] = useState<RouteFormData>({
     departure: "",
@@ -28,7 +35,31 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
     minutes: "",
   });
 
-  if (!isOpen) return null;
+  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
+  const [selectionMode, setSelectionMode] = useState<'start' | 'destination'>('start');
+  const [tempCoordinates, setTempCoordinates] = useState<{ lat: number; lng: number }>({
+    lat: 3.3516,
+    lng: -76.5320
+  });
+
+  // Get user's current location on component mount
+  React.useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setTempCoordinates({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.log('Could not get current location:', error);
+          // Keep default coordinates (Cali, Colombia)
+        },
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
+      );
+    }
+  }, []);
 
   const handleInputChange = (field: keyof RouteFormData, value: string) => {
     setFormData((prev) => ({
@@ -46,10 +77,141 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && !isSelectingLocation) {
       onClose();
     }
   };
+
+  const handleLocationButtonClick = (mode: 'start' | 'destination') => {
+    setSelectionMode(mode);
+    setIsSelectingLocation(true);
+
+    // Set initial coordinates based on existing data or current location
+    const existingCoords = mode === 'start'
+      ? formData.departureCoordinates
+      : formData.destinationCoordinates;
+
+    if (existingCoords) {
+      setTempCoordinates(existingCoords);
+    }
+
+    // Notify parent component
+    if (onLocationSelecting) {
+      onLocationSelecting(true, mode);
+    }
+  };
+
+  const handleLocationChange = (lat: number, lng: number) => {
+    setTempCoordinates({ lat, lng });
+  };
+
+  const handleConfirmLocation = () => {
+    const coordinatesField = selectionMode === 'start' ? 'departureCoordinates' : 'destinationCoordinates';
+    const locationField = selectionMode === 'start' ? 'departure' : 'destination';
+
+    const locationText = `Lat: ${tempCoordinates.lat.toFixed(4)}, Lng: ${tempCoordinates.lng.toFixed(4)}`;
+
+    setFormData((prev) => ({
+      ...prev,
+      [coordinatesField]: tempCoordinates,
+      [locationField]: locationText,
+    }));
+
+    setIsSelectingLocation(false);
+
+    // Notify parent component
+    if (onLocationSelecting) {
+      onLocationSelecting(false);
+    }
+  };
+
+  // Expose the handleConfirmLocation function via callback
+  React.useEffect(() => {
+    if (onConfirmLocation && isSelectingLocation) {
+      // Store the function globally for the FloatingActionButton to access
+      (window as any).confirmLocationSelection = handleConfirmLocation;
+    }
+    return () => {
+      if ((window as any).confirmLocationSelection) {
+        delete (window as any).confirmLocationSelection;
+      }
+    };
+  }, [isSelectingLocation, tempCoordinates, selectionMode, onConfirmLocation]);
+
+  const handleCancelLocationSelection = () => {
+    setIsSelectingLocation(false);
+
+    // Notify parent component
+    if (onLocationSelecting) {
+      onLocationSelecting(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  if (isSelectingLocation) {
+    return (
+      <div className="modal-overlay map-selection-overlay" onClick={handleOverlayClick}>
+        <div className="map-selection-container">
+          <div className="map-selection-header">
+            <h3 className="map-selection-title">
+              Selecciona {selectionMode === 'start' ? 'punto de salida' : 'destino'}
+            </h3>
+            <button className="cancel-selection-button" onClick={handleCancelLocationSelection}>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6L6 18M6 6L18 18"
+                  stroke="#757575"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="map-selection-content">
+            <LocationSelectionMap
+              className="location-selection-map"
+              initialLatitude={tempCoordinates.lat}
+              initialLongitude={tempCoordinates.lng}
+              onLocationChange={handleLocationChange}
+            />
+          </div>
+          <div className="map-selection-instructions">
+            <p>Arrastra el marcador a la ubicación deseada</p>
+            <p>Coordenadas: {tempCoordinates.lat.toFixed(6)}, {tempCoordinates.lng.toFixed(6)}</p>
+          </div>
+          <button
+          className="floating-action-button confirm-mode"
+          onClick={handleConfirmLocation}
+          title="Confirmar"
+        >
+          <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+                d="M20 6L9 17L4 12"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -112,29 +274,36 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
                     handleInputChange("departure", e.target.value)
                   }
                 />
-                <svg
-                  className="map-pin-icon"
-                  width="33"
-                  height="43"
-                  viewBox="0 0 33 43"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                <button
+                  type="button"
+                  className="map-pin-button"
+                  onClick={() => handleLocationButtonClick('start')}
+                  title="Seleccionar en mapa"
                 >
-                  <path
-                    d="M30.5 18.3182C30.5 29.4545 16.5 39 16.5 39C16.5 39 2.5 29.4545 2.5 18.3182C2.5 14.5208 3.975 10.8789 6.6005 8.1937C9.22601 5.50852 12.787 4 16.5 4C20.213 4 23.774 5.50852 26.3995 8.1937C29.025 10.8789 30.5 14.5208 30.5 18.3182Z"
-                    stroke="#A8A8A8"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M16.5 23.0909C19.0773 23.0909 21.1667 20.9541 21.1667 18.3182C21.1667 15.6823 19.0773 13.5455 16.5 13.5455C13.9227 13.5455 11.8333 15.6823 11.8333 18.3182C11.8333 20.9541 13.9227 23.0909 16.5 23.0909Z"
-                    stroke="#A8A8A8"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                  <svg
+                    className="map-pin-icon"
+                    width="33"
+                    height="43"
+                    viewBox="0 0 33 43"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M30.5 18.3182C30.5 29.4545 16.5 39 16.5 39C16.5 39 2.5 29.4545 2.5 18.3182C2.5 14.5208 3.975 10.8789 6.6005 8.1937C9.22601 5.50852 12.787 4 16.5 4C20.213 4 23.774 5.50852 26.3995 8.1937C29.025 10.8789 30.5 14.5208 30.5 18.3182Z"
+                      stroke="#A8A8A8"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M16.5 23.0909C19.0773 23.0909 21.1667 20.9541 21.1667 18.3182C21.1667 15.6823 19.0773 13.5455 16.5 13.5455C13.9227 13.5455 11.8333 15.6823 11.8333 18.3182C11.8333 20.9541 13.9227 23.0909 16.5 23.0909Z"
+                      stroke="#A8A8A8"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -151,29 +320,36 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
                     handleInputChange("destination", e.target.value)
                   }
                 />
-                <svg
-                  className="map-pin-icon"
-                  width="33"
-                  height="44"
-                  viewBox="0 0 33 44"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                <button
+                  type="button"
+                  className="map-pin-button"
+                  onClick={() => handleLocationButtonClick('destination')}
+                  title="Seleccionar en mapa"
                 >
-                  <path
-                    d="M30.5 18.8182C30.5 29.9545 16.5 39.5 16.5 39.5C16.5 39.5 2.5 29.9545 2.5 18.8182C2.5 15.0208 3.975 11.3789 6.6005 8.6937C9.22601 6.00852 12.787 4.5 16.5 4.5C20.213 4.5 23.774 6.00852 26.3995 8.6937C29.025 11.3789 30.5 15.0208 30.5 18.8182Z"
-                    stroke="#A8A8A8"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M16.5 23.5909C19.0773 23.5909 21.1667 21.4541 21.1667 18.8182C21.1667 16.1823 19.0773 14.0455 16.5 14.0455C13.9227 14.0455 11.8333 16.1823 11.8333 18.8182C11.8333 21.4541 13.9227 23.5909 16.5 23.5909Z"
-                    stroke="#A8A8A8"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                  <svg
+                    className="map-pin-icon"
+                    width="33"
+                    height="44"
+                    viewBox="0 0 33 44"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M30.5 18.8182C30.5 29.9545 16.5 39.5 16.5 39.5C16.5 39.5 2.5 29.9545 2.5 18.8182C2.5 15.0208 3.975 11.3789 6.6005 8.6937C9.22601 6.00852 12.787 4.5 16.5 4.5C20.213 4.5 23.774 6.00852 26.3995 8.6937C29.025 11.3789 30.5 15.0208 30.5 18.8182Z"
+                      stroke="#A8A8A8"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M16.5 23.5909C19.0773 23.5909 21.1667 21.4541 21.1667 18.8182C21.1667 16.1823 19.0773 14.0455 16.5 14.0455C13.9227 14.0455 11.8333 16.1823 11.8333 18.8182C11.8333 21.4541 13.9227 23.5909 16.5 23.5909Z"
+                      stroke="#A8A8A8"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
 

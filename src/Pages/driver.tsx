@@ -1,13 +1,13 @@
 import NavHeader from "../components/NavHeader/NavHeader.tsx";
 import SearchBarWithFilters from "../components/SearchBar/SearchBarWithFilters.tsx";
 import { TripsSideBar } from "../components/SideBar/TripsSideBar.tsx";
-import Map from "../components/Map/Map.tsx";
 import { CarIcon } from "../components/NavHeader/Icons.tsx";
 import AddRouteModal from "../components/AddRouteModal/AddRouteModal.tsx";
 import FloatingActionButton from "../components/FloatingActionButton/FloatingActionButton.tsx";
 import { useState } from "react";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import DriverMap from "../components/Map/DriverMap.tsx";
 
 // Mock data for demonstration
 const mockTrips = [
@@ -38,6 +38,8 @@ function Driver() {
   const [latitude, setLat] = useState(0);
   const [longitude, setLong] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
+  const [locationSelectionMode, setLocationSelectionMode] = useState<'start' | 'destination'>('start');
 
   const navigate = useNavigate();
 
@@ -93,12 +95,40 @@ function Driver() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsSelectingLocation(false);
   };
 
   const handleSubmitRoute = (formData: any) => {
     // Here you would typically send the data to your backend
     console.log("New route submitted:", formData);
     // For now, we'll just log it
+  };
+
+  const handleLocationSelecting = (isSelecting: boolean, mode?: 'start' | 'destination') => {
+    setIsSelectingLocation(isSelecting);
+    if (mode) {
+      setLocationSelectionMode(mode);
+    }
+  };
+
+  const handleConfirmLocation = () => {
+    // Call the globally exposed function from AddRouteModal
+    if ((window as any).confirmLocationSelection) {
+      (window as any).confirmLocationSelection();
+    }
+  };
+  /*
+  const handleFloatingButtonClick = () => {
+    if (isSelectingLocation) {
+      handleConfirmLocation();
+    } else {
+      handleOpenModal();
+    }
+  };
+   */
+
+  const handleFloatingButtonClick = () => {
+      handleOpenModal();
   };
 
   return (
@@ -110,17 +140,20 @@ function Driver() {
       />
       <div className="flex-1 flex-col w-full h-full justify-center justify-items-center relative">
         <SearchBarWithFilters />
-        <Map
+        <DriverMap
           className={"h-full w-full absolute top-0 left-0 z-0"}
           latitude={latitude as unknown as number}
           longitude={longitude as unknown as number}
         />
         <TripsSideBar trips={trips} onRemoveTrip={handleRemoveTrip} />
-        <FloatingActionButton onClick={handleOpenModal} />
+        <FloatingActionButton
+          onClick={handleFloatingButtonClick}
+        />
         <AddRouteModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onSubmit={handleSubmitRoute}
+          onLocationSelecting={handleLocationSelecting}
         />
       </div>
     </main>

@@ -3,11 +3,15 @@ import "./FloatingActionButton.css";
 
 interface FloatingActionButtonProps {
   onClick: () => void;
+  isConfirmMode?: boolean;
+  confirmText?: string;
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  onClick,
+  onClick
 }) => {
+
+
   return (
     <button
       className="floating-action-button"

@@ -3,7 +3,7 @@ import SearchBarWithFilters from "../components/SearchBar/SearchBarWithFilters.t
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { TripsSideBar } from "../components/SideBar/TripsSideBar.tsx";
 import { HelmetIcon } from "../components/NavHeader/Icons.tsx";
-import Map from "../components/Map/Map.tsx";
+import PassengerMap from "../components/Map/PassengerMap.tsx";
 import { useState } from "react";
 import * as React from "react";
 
@@ -93,7 +93,7 @@ function Passenger() {
       />
       <div className="flex-1 flex-col w-full h-full justify-center justify-items-center relative">
         <SearchBarWithFilters />
-        <Map
+        <PassengerMap
           className={"h-full w-full absolute top-0 left-0 z-0"}
           latitude={latitude as unknown as number}
           longitude={longitude as unknown as number}
