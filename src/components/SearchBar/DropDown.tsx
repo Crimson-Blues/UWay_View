@@ -13,15 +13,19 @@ type Props = {
     options: OptionType[],
     placeholder?: string,
     className?: string,
+    onChange?: (option: OptionType | null) => void,
+    value?: OptionType | null,
 };
 
 
 
 
-const Dropdown: React.FC<Props> = ({className, options, placeholder}) => {
-    const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
+const Dropdown: React.FC<Props> = ({className, options, placeholder, onChange, value}) => {
+    const [selectedOption, setSelectedOption] = useState<OptionType | null>(value || null);
+
     const handleChange = (option: OptionType | null) => {
         setSelectedOption(option);
+        onChange?.(option);
     };
 
     const customStyles = {
@@ -67,7 +71,7 @@ const Dropdown: React.FC<Props> = ({className, options, placeholder}) => {
             <Select
                 options={options}
                 onChange={handleChange}
-                value={selectedOption}
+                value={value || selectedOption}
                 placeholder={placeholder}
                 className={cn("text-sm", className)}
                 styles={customStyles}

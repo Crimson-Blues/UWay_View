@@ -46,14 +46,20 @@ export const TripsSideBar = ({
 
                 {/* Trips list */}
                 <div className="flex flex-col items-center w-max gap-2">
-                    {trips.map((trip, index) => (
+                    {trips.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                            <p>Aún no te has unido a ningún viaje...</p>
+                        </div>
+                    ) : (
+                    trips.map((trip, index) => (
                         <div key={trip.id} className="w-full">
                             <TripItem trip={trip} onRemove={onRemoveTrip} className="w-max"/>
                             {index < trips.length - 1 && (
                                 <div className="w-[266px] h-px bg-black mx-auto"/>
                             )}
                         </div>
-                    ))}
+                    ))
+                )}
                 </div>
             </div>
         </div>

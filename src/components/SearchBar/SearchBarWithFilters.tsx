@@ -6,28 +6,40 @@ import { BriefcaseIcon } from "./icons/BriefcaseIcon";
 import { ClockIcon } from "./icons/ClockIcon";
 import { CarIcon } from "./icons/CarIcon";
 import { FilterButton } from "./FilterButton";
+import { SearchResults } from "./SearchResults";
 import { useState } from "react";
 import type {OptionType} from "./DropDown.tsx";
+import type { Trip } from "../../types/trip";
 import {cn} from "../../lib/utils.ts";
 
-export function SearchBarWithFilters() {
+export interface FilterState {
+  tripType: OptionType | null;
+  departureTime: OptionType | null;
+  vehicle: OptionType | null;
+}
+
+interface SearchBarWithFiltersProps {
+  onSearch?: (searchTerm: string, filters: FilterState) => void;
+  searchResults?: Trip[];
+  showResults?: boolean;
+  onAcceptTrip?: (tripId: string) => void;
+  onCloseResults?: () => void;
+}
+
+export function SearchBarWithFilters({
+  onSearch,
+  searchResults = [],
+  showResults = false,
+  onAcceptTrip,
+  onCloseResults
+}: SearchBarWithFiltersProps) {
 
   const [name, setName] = useState("");
-
-  const handleTripTypeClick = () => {
-    // Handle trip type filter
-    console.log("Trip type filter clicked");
-  };
-
-  const handleDepartureTimeClick = () => {
-    // Handle departure time filter
-    console.log("Departure time filter clicked");
-  };
-
-  const handleVehicleClick = () => {
-    // Handle vehicle filter
-    console.log("Vehicle filter clicked");
-  };
+  const [filters, setFilters] = useState<FilterState>({
+    tripType: null,
+    departureTime: null,
+    vehicle: null,
+  });
 
   const handleMenuClick = () => {
     // Handle menu click
@@ -37,7 +49,20 @@ export function SearchBarWithFilters() {
 
   const handleSearchClick = () => {
     // Handle search click
-    console.log("Search clicked");
+    console.log("Search clicked with filters:", filters);
+    onSearch?.(name, filters);
+  };
+
+  const handleTripTypeChange = (option: OptionType | null) => {
+    setFilters(prev => ({ ...prev, tripType: option }));
+  };
+
+  const handleDepartureTimeChange = (option: OptionType | null) => {
+    setFilters(prev => ({ ...prev, departureTime: option }));
+  };
+
+  const handleVehicleChange = (option: OptionType | null) => {
+    setFilters(prev => ({ ...prev, vehicle: option }));
   };
 
   const TravelTypeoptions: OptionType[] = [
@@ -62,7 +87,7 @@ export function SearchBarWithFilters() {
 
   return (
     <div className="flex-grow shrink-0 flex-col w-max h-max z-20 relative">
-      <div className="flex flex-col  gap-y-0 items-center w-max px-4 py-8 max-sm:px-2 max-sm:py-4">
+      <div className="flex flex-col  gap-y-0 items-center w-max px-4 py-8 max-sm:px-2 max-sm:py-4 relative">
         {/* Main Search Bar */}
         <div
           className="flex-grow shrink-0 z-10 items-center w-max h-max bg-white rounded-[28px] shadow-md
@@ -90,6 +115,7 @@ export function SearchBarWithFilters() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
                   placeholder="Busca tu destino..."
                   className={`w-full h-max px-4 py-2 text-xl rounded-md transition-all duration-300 focus:outline-none
       ${name ? "text-left" : "text-center"}`}
@@ -119,18 +145,33 @@ export function SearchBarWithFilters() {
             icon={<BriefcaseIcon />}
             label="Tipo de Viaje"
             options={TravelTypeoptions}
+            onChange={handleTripTypeChange}
+            value={filters.tripType}
           />
           <FilterButton
             icon={<ClockIcon />}
             label="Hora Salida"
             options={TimeOptions}
+            onChange={handleDepartureTimeChange}
+            value={filters.departureTime}
           />
           <FilterButton
             icon={<CarIcon />}
             label="Vehiculo"
             options={VehicleOptions}
+            onChange={handleVehicleChange}
+            value={filters.vehicle}
           />
         </div>
+
+        {/* Search Results */}
+        <SearchResults
+          trips={searchResults}
+          onAcceptTrip={onAcceptTrip}
+          onClose={onCloseResults}
+          isVisible={showResults}
+          className="w-full max-w-4xl"
+        />
       </div>
     </div>
   );
